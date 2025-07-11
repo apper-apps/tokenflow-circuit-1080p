@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
-import { useMobileMenu } from "@/hooks/useMobileMenu";
+import { useMobileMenuContext } from "@/hooks/useMobileMenu";
 
 const Header = () => {
   const [notifications] = useState(3);
-  const { isOpen, toggle } = useMobileMenu();
+  const { isOpen, toggle } = useMobileMenuContext();
 
   return (
     <header className="bg-surface-800 border-b border-surface-700 px-6 py-4">
