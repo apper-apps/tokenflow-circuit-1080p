@@ -7,6 +7,7 @@ import Button from "@/components/atoms/Button";
 import StatCard from "@/components/molecules/StatCard";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
+import LLMProviderMonitor from "@/components/organisms/LLMProviderMonitor";
 import { dashboardService } from "@/services/api/dashboardService";
 
 const Dashboard = () => {
@@ -91,24 +92,10 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Charts and Recent Activity */}
+{/* Charts and Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Usage Chart */}
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-surface-50">Token Usage Trends</h3>
-            <Button variant="ghost" size="sm">
-              <ApperIcon name="MoreHorizontal" size={16} />
-            </Button>
-          </div>
-          <div className="h-64 bg-surface-700 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <ApperIcon name="BarChart3" size={48} className="text-surface-500 mx-auto mb-2" />
-              <p className="text-surface-400">Usage chart will be displayed here</p>
-            </div>
-          </div>
-        </Card>
-
+        {/* LLM Provider Monitor */}
+        <LLMProviderMonitor />
         {/* Cost Breakdown */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">

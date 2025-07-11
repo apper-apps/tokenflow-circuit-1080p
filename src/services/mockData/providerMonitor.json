@@ -1,0 +1,54 @@
+[
+  {
+    "name": "OpenAI",
+    "status": "online",
+    "latency": 120,
+    "availability": 99.8,
+    "baseLatency": 120,
+    "avgLatency": 118,
+    "minLatency": 85,
+    "maxLatency": 165,
+    "latencyHistory": [115, 122, 108, 134, 119, 125, 112, 128, 116, 121, 109, 127, 118, 124, 113, 129, 117, 123, 114, 120],
+    "region": "us-east-1",
+    "endpoint": "https://api.openai.com/v1/chat/completions"
+  },
+  {
+    "name": "Anthropic",
+    "status": "online",
+    "latency": 145,
+    "availability": 99.2,
+    "baseLatency": 145,
+    "avgLatency": 142,
+    "minLatency": 110,
+    "maxLatency": 180,
+    "latencyHistory": [140, 148, 135, 152, 143, 149, 138, 154, 141, 147, 136, 153, 142, 148, 139, 155, 144, 150, 137, 145],
+    "region": "us-west-2",
+    "endpoint": "https://api.anthropic.com/v1/messages"
+  },
+  {
+    "name": "Google",
+    "status": "degraded",
+    "latency": 280,
+    "availability": 97.5,
+    "baseLatency": 180,
+    "avgLatency": 275,
+    "minLatency": 200,
+    "maxLatency": 350,
+    "latencyHistory": [275, 285, 265, 295, 280, 290, 270, 300, 275, 285, 260, 295, 278, 288, 268, 298, 276, 286, 266, 280],
+    "region": "us-central1",
+    "endpoint": "https://generativelanguage.googleapis.com/v1/models"
+  },
+  {
+    "name": "Mistral",
+    "status": "online",
+    "latency": 95,
+    "availability": 98.9,
+    "baseLatency": 95,
+    "avgLatency": 92,
+    "minLatency": 65,
+    "maxLatency": 125,
+    "latencyHistory": [90, 98, 85, 102, 93, 99, 88, 104, 91, 97, 84, 103, 92, 98, 87, 105, 94, 100, 86, 95],
+    "region": "eu-west-1",
+    "endpoint": "https://api.mistral.ai/v1/chat/completions"
+  }
+]
