@@ -329,17 +329,18 @@ const loadProject = async () => {
                 <ApperIcon name="CheckCircle" size={16} className="text-accent-400" />
                 <span className="text-sm text-surface-300">
                   Current optimization is saving ${analytics["30d"].costSavings.toFixed(2)} monthly
+Current optimization is saving ${analytics["30d"].costSavings.toFixed(2)} monthly
                 </span>
               </div>
             )}
-</div>
+          </div>
         </div>
       </Card>
     )}
 
-      {/* Project Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* API Keys */}
+    {/* Project Details */}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* API Keys */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-surface-50">API Keys</h3>
