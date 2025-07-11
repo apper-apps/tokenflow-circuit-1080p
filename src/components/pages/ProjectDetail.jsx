@@ -332,11 +332,10 @@ const loadProject = async () => {
                 </span>
               </div>
             )}
-          </div>
+</div>
         </div>
       </Card>
     )}
-  </div>
 
       {/* Project Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -458,7 +457,7 @@ const loadProject = async () => {
               </div>
             </motion.div>
           ))}
-        </div>
+</div>
       </Card>
     </div>
   );
