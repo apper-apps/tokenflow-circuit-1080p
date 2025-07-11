@@ -75,9 +75,9 @@ const RoutingRules = () => {
           <p className="text-surface-400 mt-1">
             Configure intelligent routing logic for optimal cost and performance
           </p>
-        </div>
+</div>
         <div className="flex space-x-3">
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => window.location.href = '/sandbox'}>
             <ApperIcon name="Play" size={16} className="mr-2" />
             Test Rules
           </Button>

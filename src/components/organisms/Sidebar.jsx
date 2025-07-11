@@ -7,8 +7,9 @@ const Sidebar = () => {
   const navigation = [
     { name: "Dashboard", href: "/", icon: "BarChart3" },
     { name: "Projects", href: "/projects", icon: "FolderOpen" },
-    { name: "API Keys", href: "/api-keys", icon: "Key" },
+{ name: "API Keys", href: "/api-keys", icon: "Key" },
     { name: "Routing Rules", href: "/routing-rules", icon: "GitBranch" },
+    { name: "Sandbox", href: "/sandbox", icon: "TestTube" },
     { name: "Analytics", href: "/analytics", icon: "TrendingUp" },
     { name: "Team", href: "/team", icon: "Users" },
     { name: "Settings", href: "/settings", icon: "Settings" }

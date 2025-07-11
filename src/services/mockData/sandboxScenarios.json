@@ -1,0 +1,114 @@
+[
+  {
+    "Id": 1,
+    "name": "Simple Chat Query",
+    "description": "Basic conversational AI interaction",
+    "model": "gpt-3.5-turbo",
+    "tokens": 150,
+    "complexity": "simple",
+    "category": "chat",
+    "parameters": {
+      "temperature": 0.7,
+      "max_tokens": 150,
+      "top_p": 1.0
+    }
+  },
+  {
+    "Id": 2,
+    "name": "Code Generation",
+    "description": "Generate Python function with documentation",
+    "model": "gpt-4",
+    "tokens": 800,
+    "complexity": "medium",
+    "category": "code",
+    "parameters": {
+      "temperature": 0.2,
+      "max_tokens": 800,
+      "top_p": 0.9
+    }
+  },
+  {
+    "Id": 3,
+    "name": "Document Analysis",
+    "description": "Analyze and summarize large document",
+    "model": "claude-3-opus",
+    "tokens": 2500,
+    "complexity": "complex",
+    "category": "analysis",
+    "parameters": {
+      "temperature": 0.3,
+      "max_tokens": 2500,
+      "top_p": 0.95
+    }
+  },
+  {
+    "Id": 4,
+    "name": "Creative Writing",
+    "description": "Generate creative story with specific themes",
+    "model": "gpt-4-turbo",
+    "tokens": 1200,
+    "complexity": "medium",
+    "category": "creative",
+    "parameters": {
+      "temperature": 0.9,
+      "max_tokens": 1200,
+      "top_p": 0.8
+    }
+  },
+  {
+    "Id": 5,
+    "name": "Technical Translation",
+    "description": "Translate technical documentation",
+    "model": "gemini-pro",
+    "tokens": 600,
+    "complexity": "medium",
+    "category": "translation",
+    "parameters": {
+      "temperature": 0.1,
+      "max_tokens": 600,
+      "top_p": 0.95
+    }
+  },
+  {
+    "Id": 6,
+    "name": "Data Processing",
+    "description": "Process and analyze structured data",
+    "model": "claude-3-sonnet",
+    "tokens": 1800,
+    "complexity": "complex",
+    "category": "data",
+    "parameters": {
+      "temperature": 0.0,
+      "max_tokens": 1800,
+      "top_p": 1.0
+    }
+  },
+  {
+    "Id": 7,
+    "name": "Quick FAQ Response",
+    "description": "Answer common customer questions",
+    "model": "gpt-3.5-turbo",
+    "tokens": 100,
+    "complexity": "simple",
+    "category": "support",
+    "parameters": {
+      "temperature": 0.5,
+      "max_tokens": 100,
+      "top_p": 0.9
+    }
+  },
+  {
+    "Id": 8,
+    "name": "Research Synthesis",
+    "description": "Synthesize information from multiple sources",
+    "model": "gpt-4",
+    "tokens": 3000,
+    "complexity": "complex",
+    "category": "research",
+    "parameters": {
+      "temperature": 0.4,
+      "max_tokens": 3000,
+      "top_p": 0.92
+    }
+  }
+]
