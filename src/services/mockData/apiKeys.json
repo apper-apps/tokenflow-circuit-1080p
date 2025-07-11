@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "provider": "OpenAI",
+    "name": "Primary GPT-4",
+    "encryptedKey": "sk-proj-abc123...xyz789",
+    "status": "active",
+    "lastValidated": "2024-01-15T10:30:00Z",
+    "monthlyRequests": 25400,
+    "monthlyCost": 456.78
+  },
+  {
+    "Id": 2,
+    "provider": "Anthropic",
+    "name": "Claude Fallback",
+    "encryptedKey": "sk-ant-def456...uvw012",
+    "status": "active",
+    "lastValidated": "2024-01-14T16:45:00Z",
+    "monthlyRequests": 18200,
+    "monthlyCost": 298.45
+  },
+  {
+    "Id": 3,
+    "provider": "Google",
+    "name": "Gemini Pro",
+    "encryptedKey": "AIza...SyD123",
+    "status": "active",
+    "lastValidated": "2024-01-15T08:15:00Z",
+    "monthlyRequests": 12850,
+    "monthlyCost": 187.90
+  },
+  {
+    "Id": 4,
+    "provider": "OpenAI",
+    "name": "GPT-4 Turbo",
+    "encryptedKey": "sk-proj-ghi789...rst345",
+    "status": "pending",
+    "lastValidated": null,
+    "monthlyRequests": 0,
+    "monthlyCost": 0
+  },
+  {
+    "Id": 5,
+    "provider": "Mistral",
+    "name": "Mistral Medium",
+    "encryptedKey": "mst-jkl012...mno678",
+    "status": "active",
+    "lastValidated": "2024-01-13T12:20:00Z",
+    "monthlyRequests": 8950,
+    "monthlyCost": 134.25
+  },
+  {
+    "Id": 6,
+    "provider": "Cohere",
+    "name": "Command R+",
+    "encryptedKey": "co-pqr345...def901",
+    "status": "error",
+    "lastValidated": "2024-01-12T14:30:00Z",
+    "monthlyRequests": 3200,
+    "monthlyCost": 89.50
+  },
+  {
+    "Id": 7,
+    "provider": "Anthropic",
+    "name": "Claude-3 Sonnet",
+    "encryptedKey": "sk-ant-stu678...bcd234",
+    "status": "active",
+    "lastValidated": "2024-01-15T09:45:00Z",
+    "monthlyRequests": 15600,
+    "monthlyCost": 267.80
+  },
+  {
+    "Id": 8,
+    "provider": "Google",
+    "name": "Gemini Ultra",
+    "encryptedKey": "AIza...XyZ456",
+    "status": "inactive",
+    "lastValidated": "2024-01-10T11:00:00Z",
+    "monthlyRequests": 0,
+    "monthlyCost": 0
+  }
+]

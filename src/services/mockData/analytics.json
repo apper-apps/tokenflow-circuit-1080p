@@ -1,0 +1,92 @@
+{
+  "7d": {
+    "totalRequests": 89456,
+    "totalCost": 1247.85,
+    "costSavings": 289.50,
+    "avgResponseTime": 125,
+    "providerPerformance": [
+      {
+        "name": "OpenAI",
+        "requests": 35600,
+        "successRate": 98.5,
+        "avgLatency": 145,
+        "cost": 567.30,
+        "costPer1K": 0.0159
+      },
+      {
+        "name": "Anthropic",
+        "requests": 24800,
+        "successRate": 99.2,
+        "avgLatency": 189,
+        "cost": 398.45,
+        "costPer1K": 0.0161
+      },
+      {
+        "name": "Google",
+        "requests": 18900,
+        "successRate": 97.8,
+        "avgLatency": 98,
+        "cost": 201.20,
+        "costPer1K": 0.0106
+      },
+      {
+        "name": "Mistral",
+        "requests": 10156,
+        "successRate": 96.5,
+        "avgLatency": 156,
+        "cost": 80.90,
+        "costPer1K": 0.0080
+      }
+    ],
+    "optimization": {
+      "costReduction": 18.8,
+      "speedImprovement": 12.3,
+      "reliabilityImprovement": 5.7
+    }
+  },
+  "30d": {
+    "totalRequests": 345678,
+    "totalCost": 4892.45,
+    "costSavings": 1156.78,
+    "avgResponseTime": 132,
+    "providerPerformance": [
+      {
+        "name": "OpenAI",
+        "requests": 142500,
+        "successRate": 98.7,
+        "avgLatency": 152,
+        "cost": 2245.60,
+        "costPer1K": 0.0158
+      },
+      {
+        "name": "Anthropic",
+        "requests": 98200,
+        "successRate": 99.1,
+        "avgLatency": 195,
+        "cost": 1567.80,
+        "costPer1K": 0.0160
+      },
+      {
+        "name": "Google",
+        "requests": 74600,
+        "successRate": 97.9,
+        "avgLatency": 105,
+        "cost": 789.45,
+        "costPer1K": 0.0106
+      },
+      {
+        "name": "Mistral",
+        "requests": 30378,
+        "successRate": 96.8,
+        "avgLatency": 162,
+        "cost": 289.60,
+        "costPer1K": 0.0095
+      }
+    ],
+    "optimization": {
+      "costReduction": 23.6,
+      "speedImprovement": 15.2,
+      "reliabilityImprovement": 8.4
+    }
+  }
+}

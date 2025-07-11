@@ -1,0 +1,57 @@
+{
+  "totalProjects": 8,
+  "apiCallsToday": 45672,
+  "costSavings": 1247.50,
+  "avgResponseTime": 125,
+  "costBreakdown": [
+    {
+      "provider": "OpenAI",
+      "cost": 892.45,
+      "percentage": 45.2
+    },
+    {
+      "provider": "Anthropic",
+      "cost": 567.30,
+      "percentage": 28.7
+    },
+    {
+      "provider": "Google",
+      "cost": 345.80,
+      "percentage": 17.5
+    },
+    {
+      "provider": "Mistral",
+      "cost": 167.25,
+      "percentage": 8.6
+    }
+  ],
+  "recentProjects": [
+    {
+      "Id": 1,
+      "name": "ChatBot Assistant",
+      "description": "Customer service chatbot",
+      "status": "active",
+      "monthlyRequests": 12450,
+      "monthlyCost": 234.50,
+      "lastActive": "2024-01-15T10:30:00Z"
+    },
+    {
+      "Id": 2,
+      "name": "Content Generator",
+      "description": "AI content creation system",
+      "status": "active",
+      "monthlyRequests": 8920,
+      "monthlyCost": 189.20,
+      "lastActive": "2024-01-14T16:45:00Z"
+    },
+    {
+      "Id": 3,
+      "name": "Code Review Bot",
+      "description": "Automated code analysis",
+      "status": "active",
+      "monthlyRequests": 5670,
+      "monthlyCost": 145.80,
+      "lastActive": "2024-01-13T09:15:00Z"
+    }
+  ]
+}

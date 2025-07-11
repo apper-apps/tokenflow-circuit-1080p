@@ -1,0 +1,225 @@
+[
+  {
+    "Id": 1,
+    "name": "ChatBot Assistant",
+    "description": "Customer service chatbot with intelligent routing",
+    "status": "active",
+    "monthlyRequests": 12450,
+    "monthlyCost": 234.50,
+    "apiKeys": [
+      {
+        "provider": "OpenAI",
+        "name": "Primary GPT-4",
+        "status": "active"
+      },
+      {
+        "provider": "Anthropic",
+        "name": "Claude Fallback",
+        "status": "active"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Cost Optimization",
+        "priority": "cost",
+        "targetProvider": "openai",
+        "fallbackProviders": ["anthropic"]
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "API key validation successful",
+        "timestamp": "2 hours ago"
+      },
+      {
+        "description": "Routing rule updated",
+        "timestamp": "5 hours ago"
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "name": "Content Generator",
+    "description": "AI-powered content creation for marketing",
+    "status": "active",
+    "monthlyRequests": 8920,
+    "monthlyCost": 189.20,
+    "apiKeys": [
+      {
+        "provider": "OpenAI",
+        "name": "GPT-4 Turbo",
+        "status": "active"
+      },
+      {
+        "provider": "Google",
+        "name": "Gemini Pro",
+        "status": "active"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Speed Priority",
+        "priority": "speed",
+        "targetProvider": "google",
+        "fallbackProviders": ["openai"]
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "New API key added",
+        "timestamp": "1 day ago"
+      },
+      {
+        "description": "Monthly usage report generated",
+        "timestamp": "2 days ago"
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "name": "Code Review Bot",
+    "description": "Automated code analysis and suggestions",
+    "status": "active",
+    "monthlyRequests": 5670,
+    "monthlyCost": 145.80,
+    "apiKeys": [
+      {
+        "provider": "Anthropic",
+        "name": "Claude-3 Sonnet",
+        "status": "active"
+      },
+      {
+        "provider": "OpenAI",
+        "name": "GPT-4",
+        "status": "pending"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Reliability Focus",
+        "priority": "reliability",
+        "targetProvider": "anthropic",
+        "fallbackProviders": ["openai"]
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "Code review completed",
+        "timestamp": "30 minutes ago"
+      },
+      {
+        "description": "Performance optimization applied",
+        "timestamp": "3 hours ago"
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "name": "Research Assistant",
+    "description": "AI research and data analysis tool",
+    "status": "inactive",
+    "monthlyRequests": 2340,
+    "monthlyCost": 67.90,
+    "apiKeys": [
+      {
+        "provider": "OpenAI",
+        "name": "GPT-4",
+        "status": "error"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Default Route",
+        "priority": "balanced",
+        "targetProvider": "openai",
+        "fallbackProviders": []
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "API key validation failed",
+        "timestamp": "2 days ago"
+      },
+      {
+        "description": "Project paused due to errors",
+        "timestamp": "2 days ago"
+      }
+    ]
+  },
+  {
+    "Id": 5,
+    "name": "Translation Service",
+    "description": "Multi-language translation API",
+    "status": "active",
+    "monthlyRequests": 15230,
+    "monthlyCost": 298.70,
+    "apiKeys": [
+      {
+        "provider": "Google",
+        "name": "Gemini Translation",
+        "status": "active"
+      },
+      {
+        "provider": "OpenAI",
+        "name": "GPT-4 Backup",
+        "status": "active"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Translation Optimized",
+        "priority": "cost",
+        "targetProvider": "google",
+        "fallbackProviders": ["openai"]
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "Translation batch completed",
+        "timestamp": "1 hour ago"
+      },
+      {
+        "description": "New language support added",
+        "timestamp": "1 day ago"
+      }
+    ]
+  },
+  {
+    "Id": 6,
+    "name": "Email Assistant",
+    "description": "Smart email composition and responses",
+    "status": "active",
+    "monthlyRequests": 7845,
+    "monthlyCost": 156.30,
+    "apiKeys": [
+      {
+        "provider": "Anthropic",
+        "name": "Claude-3 Haiku",
+        "status": "active"
+      },
+      {
+        "provider": "Mistral",
+        "name": "Mistral Medium",
+        "status": "active"
+      }
+    ],
+    "routingRules": [
+      {
+        "name": "Email Optimized",
+        "priority": "balanced",
+        "targetProvider": "anthropic",
+        "fallbackProviders": ["mistral"]
+      }
+    ],
+    "recentActivity": [
+      {
+        "description": "Email template updated",
+        "timestamp": "4 hours ago"
+      },
+      {
+        "description": "Response time improved",
+        "timestamp": "1 day ago"
+      }
+    ]
+  }
+]

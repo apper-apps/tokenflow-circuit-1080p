@@ -1,0 +1,72 @@
+[
+  {
+    "Id": 1,
+    "name": "Cost Optimization Primary",
+    "priority": "cost",
+    "conditions": {
+      "maxCost": 0.02,
+      "maxLatency": 2000,
+      "minSuccessRate": 95
+    },
+    "targetProvider": "openai",
+    "fallbackProviders": ["anthropic", "google"],
+    "createdAt": "2024-01-10T10:00:00Z",
+    "lastModified": "2024-01-14T15:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Speed Priority",
+    "priority": "speed",
+    "conditions": {
+      "maxCost": 0.05,
+      "maxLatency": 500,
+      "minSuccessRate": 98
+    },
+    "targetProvider": "google",
+    "fallbackProviders": ["openai", "mistral"],
+    "createdAt": "2024-01-11T14:20:00Z",
+    "lastModified": "2024-01-15T09:15:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Reliability Focus",
+    "priority": "reliability",
+    "conditions": {
+      "maxCost": 0.03,
+      "maxLatency": 1500,
+      "minSuccessRate": 99
+    },
+    "targetProvider": "anthropic",
+    "fallbackProviders": ["openai", "google"],
+    "createdAt": "2024-01-12T09:45:00Z",
+    "lastModified": "2024-01-13T16:20:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Balanced Performance",
+    "priority": "balanced",
+    "conditions": {
+      "maxCost": 0.025,
+      "maxLatency": 1000,
+      "minSuccessRate": 97
+    },
+    "targetProvider": "openai",
+    "fallbackProviders": ["anthropic", "google", "mistral"],
+    "createdAt": "2024-01-08T11:30:00Z",
+    "lastModified": "2024-01-14T14:45:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "High Volume Handler",
+    "priority": "cost",
+    "conditions": {
+      "maxCost": 0.015,
+      "maxLatency": 3000,
+      "minSuccessRate": 94
+    },
+    "targetProvider": "mistral",
+    "fallbackProviders": ["openai", "google"],
+    "createdAt": "2024-01-13T13:15:00Z",
+    "lastModified": "2024-01-15T10:00:00Z"
+  }
+]
