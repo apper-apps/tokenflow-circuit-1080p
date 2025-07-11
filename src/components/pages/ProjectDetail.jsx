@@ -1,33 +1,93 @@
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
-import Card from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
+import Button from "@/components/atoms/Button";
+import Card from "@/components/atoms/Card";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
+import Settings from "@/components/pages/Settings";
 import StatCard from "@/components/molecules/StatCard";
 import StatusIndicator from "@/components/molecules/StatusIndicator";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
 import { projectService } from "@/services/api/projectService";
+import { analyticsService } from "@/services/api/analyticsService";
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const [project, setProject] = useState(null);
+const [project, setProject] = useState(null);
+  const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [forecastData, setForecastData] = useState(null);
 
-  const loadProject = async () => {
+const loadProject = async () => {
     try {
       setLoading(true);
       setError(null);
-      const result = await projectService.getById(parseInt(id));
-      setProject(result);
+      const [projectResult, analyticsResult] = await Promise.all([
+        projectService.getById(parseInt(id)),
+        analyticsService.getAll()
+      ]);
+      setProject(projectResult);
+      setAnalytics(analyticsResult);
+      
+      // Calculate forecast data
+      const forecast = calculateCostForecast(projectResult, analyticsResult);
+      setForecastData(forecast);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const calculateCostForecast = (project, analytics) => {
+    if (!project || !analytics) return null;
+
+    const currentMonthlyCost = project.monthlyCost || 0;
+    const currentMonthlyRequests = project.monthlyRequests || 0;
+    const thirtyDayData = analytics["30d"];
+    
+    // Calculate cost per request
+    const costPerRequest = currentMonthlyCost / Math.max(currentMonthlyRequests, 1);
+    
+    // Calculate growth trends from analytics
+    const sevenDayData = analytics["7d"];
+    const weeklyGrowthRate = sevenDayData.totalRequests / (thirtyDayData.totalRequests / 4.3);
+    const monthlyGrowthRate = Math.max(0.95, Math.min(1.3, weeklyGrowthRate)); // Cap between -5% and +30%
+    
+    // Forecast calculations
+    const forecasts = {
+      thirtyDay: {
+        requests: Math.round(currentMonthlyRequests * monthlyGrowthRate),
+        cost: currentMonthlyCost * monthlyGrowthRate,
+        savings: thirtyDayData.costSavings * monthlyGrowthRate,
+        trend: monthlyGrowthRate > 1.05 ? 'increasing' : monthlyGrowthRate < 0.95 ? 'decreasing' : 'stable'
+      },
+      ninetyDay: {
+        requests: Math.round(currentMonthlyRequests * Math.pow(monthlyGrowthRate, 3)),
+        cost: currentMonthlyCost * Math.pow(monthlyGrowthRate, 3),
+        savings: thirtyDayData.costSavings * Math.pow(monthlyGrowthRate, 3) * 3,
+        trend: monthlyGrowthRate > 1.05 ? 'increasing' : monthlyGrowthRate < 0.95 ? 'decreasing' : 'stable'
+      },
+      yearly: {
+        requests: Math.round(currentMonthlyRequests * Math.pow(monthlyGrowthRate, 12)),
+        cost: currentMonthlyCost * Math.pow(monthlyGrowthRate, 12),
+        savings: thirtyDayData.costSavings * Math.pow(monthlyGrowthRate, 12) * 12,
+        trend: monthlyGrowthRate > 1.05 ? 'increasing' : monthlyGrowthRate < 0.95 ? 'decreasing' : 'stable'
+      }
+    };
+
+    // Calculate overspending risk
+    const budgetThreshold = currentMonthlyCost * 1.5; // 50% over current
+    const overspendingRisk = {
+      thirtyDay: forecasts.thirtyDay.cost > budgetThreshold,
+      ninetyDay: forecasts.ninetyDay.cost > budgetThreshold * 3,
+      yearly: forecasts.yearly.cost > budgetThreshold * 12
+    };
+
+    return { ...forecasts, overspendingRisk, budgetThreshold };
   };
 
   useEffect(() => {
@@ -99,8 +159,184 @@ const ProjectDetail = () => {
           icon="DollarSign"
           color="warning"
           trend="down"
-        />
-      </div>
+/>
+    </div>
+
+    {/* Cost Forecasting Section */}
+    {forecastData && (
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-semibold text-surface-50">Cost Forecasting</h3>
+            <p className="text-sm text-surface-400 mt-1">
+              Predictions based on historical usage patterns and trends
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <ApperIcon name="TrendingUp" size={20} className="text-primary-400" />
+            <span className="text-sm text-surface-400">AI-Powered</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-surface-700 p-4 rounded-lg"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-surface-400">30-Day Forecast</span>
+              {forecastData.overspendingRisk.thirtyDay && (
+                <Badge variant="danger" size="sm">Risk</Badge>
+              )}
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Requests</span>
+                <span className="text-sm font-medium text-surface-200">
+                  {forecastData.thirtyDay.requests.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Cost</span>
+                <span className="text-sm font-medium text-surface-200">
+                  ${forecastData.thirtyDay.cost.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Savings</span>
+                <span className="text-sm font-medium text-accent-400">
+                  ${forecastData.thirtyDay.savings.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-surface-700 p-4 rounded-lg"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-surface-400">90-Day Forecast</span>
+              {forecastData.overspendingRisk.ninetyDay && (
+                <Badge variant="danger" size="sm">Risk</Badge>
+              )}
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Requests</span>
+                <span className="text-sm font-medium text-surface-200">
+                  {forecastData.ninetyDay.requests.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Cost</span>
+                <span className="text-sm font-medium text-surface-200">
+                  ${forecastData.ninetyDay.cost.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Savings</span>
+                <span className="text-sm font-medium text-accent-400">
+                  ${forecastData.ninetyDay.savings.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-surface-700 p-4 rounded-lg"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-surface-400">Yearly Forecast</span>
+              {forecastData.overspendingRisk.yearly && (
+                <Badge variant="danger" size="sm">Risk</Badge>
+              )}
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Requests</span>
+                <span className="text-sm font-medium text-surface-200">
+                  {forecastData.yearly.requests.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Cost</span>
+                <span className="text-sm font-medium text-surface-200">
+                  ${forecastData.yearly.cost.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-surface-400">Savings</span>
+                <span className="text-sm font-medium text-accent-400">
+                  ${forecastData.yearly.savings.toFixed(2)}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Overspending Alerts */}
+        {(forecastData.overspendingRisk.thirtyDay || forecastData.overspendingRisk.ninetyDay || forecastData.overspendingRisk.yearly) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-red-500/10 border border-red-500/20 p-4 rounded-lg mb-4"
+          >
+            <div className="flex items-center space-x-3">
+              <ApperIcon name="AlertTriangle" size={20} className="text-red-400" />
+              <div>
+                <h4 className="font-medium text-red-300">Overspending Alert</h4>
+                <p className="text-sm text-red-400 mt-1">
+                  Forecasted costs exceed budget thresholds. Consider optimizing routing rules or setting spending limits.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Recommendations */}
+        <div className="bg-surface-700 p-4 rounded-lg">
+          <h4 className="font-medium text-surface-200 mb-3">Cost Optimization Recommendations</h4>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <ApperIcon name="CheckCircle" size={16} className="text-accent-400" />
+              <span className="text-sm text-surface-300">
+                Enable cost-based routing to reduce expenses by up to 25%
+              </span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ApperIcon name="CheckCircle" size={16} className="text-accent-400" />
+              <span className="text-sm text-surface-300">
+                Set up spending alerts at 80% of monthly budget
+              </span>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ApperIcon name="CheckCircle" size={16} className="text-accent-400" />
+              <span className="text-sm text-surface-300">
+                Review provider performance to optimize cost-efficiency ratio
+              </span>
+            </div>
+            {analytics && analytics["30d"] && (
+              <div className="flex items-center space-x-3">
+                <ApperIcon name="CheckCircle" size={16} className="text-accent-400" />
+                <span className="text-sm text-surface-300">
+                  Current optimization is saving ${analytics["30d"].costSavings.toFixed(2)} monthly
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </Card>
+    )}
+  </div>
 
       {/* Project Details */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
