@@ -6,6 +6,59 @@ let nextConfigId = 1;
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const sandboxService = {
+  async getAll() {
+    await delay(300);
+    return [...configurations];
+  },
+
+  async getById(id) {
+    await delay(200);
+    const config = configurations.find(c => c.Id === parseInt(id));
+    if (!config) {
+      throw new Error(`Configuration with ID ${id} not found`);
+    }
+    return { ...config };
+  },
+
+  async create(config) {
+    await delay(400);
+    const newConfig = {
+      Id: nextConfigId++,
+      ...config,
+      createdAt: new Date().toISOString(),
+      name: config.name || `Test Config ${nextConfigId - 1}`
+    };
+    configurations.push(newConfig);
+    return { ...newConfig };
+  },
+
+  async update(id, data) {
+    await delay(300);
+    const index = configurations.findIndex(c => c.Id === parseInt(id));
+    if (index === -1) {
+      throw new Error(`Configuration with ID ${id} not found`);
+    }
+    
+    configurations[index] = {
+      ...configurations[index],
+      ...data,
+      Id: parseInt(id),
+      updatedAt: new Date().toISOString()
+    };
+    
+    return { ...configurations[index] };
+  },
+
+  async delete(id) {
+    await delay(300);
+    const index = configurations.findIndex(c => c.Id === parseInt(id));
+    if (index === -1) {
+      throw new Error(`Configuration with ID ${id} not found`);
+    }
+    configurations.splice(index, 1);
+    return true;
+  },
+
   async getScenarios() {
     await delay(300);
     return [...mockScenarios];
@@ -49,39 +102,20 @@ export const sandboxService = {
     return result;
   },
 
+  // Legacy methods for backward compatibility
   async saveConfiguration(config) {
-    await delay(400);
-    const newConfig = {
-      Id: nextConfigId++,
-      ...config,
-      createdAt: new Date().toISOString(),
-      name: `Test Config ${nextConfigId - 1}`
-    };
-    configurations.push(newConfig);
-    return newConfig;
+    return this.create(config);
   },
 
   async getConfigurations() {
-    await delay(300);
-    return [...configurations];
+    return this.getAll();
   },
 
   async getConfigurationById(id) {
-    await delay(200);
-    const config = configurations.find(c => c.Id === parseInt(id));
-    if (!config) {
-      throw new Error(`Configuration with ID ${id} not found`);
-    }
-    return { ...config };
+    return this.getById(id);
   },
 
   async deleteConfiguration(id) {
-    await delay(300);
-    const index = configurations.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error(`Configuration with ID ${id} not found`);
-    }
-    configurations.splice(index, 1);
-    return true;
+    return this.delete(id);
   }
 };

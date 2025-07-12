@@ -3,11 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
+"scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api": "node src/server/index.js",
+    "dev:full": "npm run api & npm run dev"
   },
 "dependencies": {
     "@reduxjs/toolkit": "2.7.0",
@@ -23,7 +25,11 @@
     "react-router-dom": "6.15.0",
     "react-toastify": "11.0.5",
     "clsx": "^2.0.0",
-    "tailwind-merge": "^3.0.0"
+    "tailwind-merge": "^3.0.0",
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
