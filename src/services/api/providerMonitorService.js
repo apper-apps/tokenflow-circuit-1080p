@@ -108,12 +108,77 @@ export const providerMonitorService = {
       // Process and update each provider with real-time simulation
 return providers.map(provider => {
         // Convert database fields to match component expectations (camelCase)
-        let latencyHistory = [];
+let latencyHistory = [];
+        const rawLatencyData = provider.latency_history || '[]';
+        
         try {
-          latencyHistory = JSON.parse(provider.latency_history || '[]');
-        } catch (error) {
-          console.error('Error parsing latency_history for provider:', provider.Name, error);
+          // First attempt: direct parsing
+          latencyHistory = JSON.parse(rawLatencyData);
+        } catch (firstError) {
+          console.warn(`Initial JSON parse failed for provider ${provider.Name}:`, firstError.message);
+          
+          try {
+            // Second attempt: sanitize common corruption patterns
+            let cleanedData = rawLatencyData
+              // Remove any characters after the last valid JSON closing bracket/brace
+              .replace(/(\]|\})[^}\]]*$/, '$1')
+              // Fix common escape sequence issues
+              .replace(/\\(?!["\\/bfnrt]|u[0-9a-fA-F]{4})/g, '\\\\')
+              // Remove any null bytes or control characters
+              .replace(/[\x00-\x1F\x7F]/g, '')
+              // Ensure proper array format if it looks like a truncated array
+              .replace(/,\s*$/, '');
+            
+            // If the data doesn't start with [ or {, wrap it in an array
+            if (cleanedData && !cleanedData.trim().startsWith('[') && !cleanedData.trim().startsWith('{')) {
+              cleanedData = `[${cleanedData}]`;
+            }
+            
+            // Ensure array is properly closed
+            if (cleanedData.startsWith('[') && !cleanedData.endsWith(']')) {
+              cleanedData += ']';
+            }
+            
+            latencyHistory = JSON.parse(cleanedData);
+            console.log(`Successfully recovered latency data for provider ${provider.Name} after sanitization`);
+            
+          } catch (secondError) {
+            console.warn(`Data sanitization failed for provider ${provider.Name}:`, secondError.message);
+            
+            try {
+              // Third attempt: extract valid numbers from corrupted data
+              const numberMatches = rawLatencyData.match(/\d+(?:\.\d+)?/g);
+              if (numberMatches && numberMatches.length > 0) {
+                latencyHistory = numberMatches.slice(0, 50).map(num => parseFloat(num));
+                console.log(`Extracted ${latencyHistory.length} numeric values from corrupted data for provider ${provider.Name}`);
+              } else {
+                throw new Error('No valid numeric data found');
+              }
+            } catch (thirdError) {
+              // Final fallback: empty array with detailed error logging
+              console.error(`Complete latency_history parsing failure for provider ${provider.Name}:`, {
+                originalError: firstError.message,
+                sanitizationError: secondError.message,
+                extractionError: thirdError.message,
+                rawDataSample: rawLatencyData.substring(0, 100) + (rawLatencyData.length > 100 ? '...' : ''),
+                dataLength: rawLatencyData.length
+              });
+              latencyHistory = [];
+            }
+          }
+        }
+        
+        // Validate the parsed data is an array of numbers
+        if (!Array.isArray(latencyHistory)) {
+          console.warn(`Provider ${provider.Name} latency_history is not an array, converting:`, typeof latencyHistory);
           latencyHistory = [];
+        } else {
+          // Filter out any non-numeric values
+          const originalLength = latencyHistory.length;
+          latencyHistory = latencyHistory.filter(item => typeof item === 'number' && !isNaN(item));
+          if (latencyHistory.length !== originalLength) {
+            console.warn(`Filtered out ${originalLength - latencyHistory.length} invalid entries from provider ${provider.Name} latency history`);
+          }
         }
         
         const processedProvider = {
