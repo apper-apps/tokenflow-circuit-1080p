@@ -51,10 +51,10 @@ const APIKeys = () => {
   const handleSearch = (term) => {
     if (term.trim() === "") {
       setFilteredKeys(apiKeys);
-    } else {
+} else {
       const filtered = apiKeys.filter(key =>
-        key.provider.toLowerCase().includes(term.toLowerCase()) ||
-        key.name.toLowerCase().includes(term.toLowerCase())
+        (key.provider || "").toLowerCase().includes(term.toLowerCase()) ||
+        (key.Name || key.name || "").toLowerCase().includes(term.toLowerCase())
       );
       setFilteredKeys(filtered);
     }
@@ -67,10 +67,12 @@ const APIKeys = () => {
         return;
       }
 
-      const result = await apiKeyService.create({
-        ...newKey,
+const result = await apiKeyService.create({
+        Name: newKey.name,
+        provider: newKey.provider,
+        encrypted_key: newKey.encryptedKey,
         status: "pending",
-        lastValidated: null
+        last_validated: null
       });
 
       setApiKeys([...apiKeys, result]);

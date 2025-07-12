@@ -35,10 +35,10 @@ const Projects = () => {
     setSearchTerm(term);
     if (term.trim() === "") {
       setFilteredProjects(projects);
-    } else {
+} else {
       const filtered = projects.filter(project =>
-        project.name.toLowerCase().includes(term.toLowerCase()) ||
-        project.description.toLowerCase().includes(term.toLowerCase())
+        (project.Name || project.name || "").toLowerCase().includes(term.toLowerCase()) ||
+        (project.description || "").toLowerCase().includes(term.toLowerCase())
       );
       setFilteredProjects(filtered);
     }

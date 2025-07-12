@@ -157,8 +157,8 @@ const Header = () => {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowWorkspaceDropdown(false)}
               />
-            )}
-</div>
+)}
+          </div>
 
           {/* User Profile */}
           <div className="flex items-center space-x-3">
@@ -170,6 +170,23 @@ const Header = () => {
               <p className="text-xs text-surface-400">Admin</p>
             </div>
           </div>
+
+          {/* Logout Button */}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => {
+              const { AuthContext } = require('../../App');
+              const { useContext } = require('react');
+              const authMethods = useContext(AuthContext);
+              if (authMethods && authMethods.logout) {
+                authMethods.logout();
+              }
+            }}
+            className="hover:bg-surface-700"
+          >
+            <ApperIcon name="LogOut" size={20} className="text-surface-300 hover:text-surface-100" />
+          </Button>
         </div>
       </div>
     </header>

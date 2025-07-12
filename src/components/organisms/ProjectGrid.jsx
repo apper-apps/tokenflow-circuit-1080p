@@ -37,9 +37,9 @@ const ProjectGrid = ({ projects }) => {
                   <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
                     <ApperIcon name="FolderOpen" size={20} className="text-white" />
                   </div>
-                  <div>
+<div>
                     <h3 className="text-lg font-semibold text-surface-50 group-hover:text-primary-400 transition-colors">
-                      {project.name}
+                      {project.Name || project.name}
                     </h3>
                     <p className="text-sm text-surface-400">{project.description}</p>
                   </div>
@@ -69,7 +69,7 @@ const ProjectGrid = ({ projects }) => {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-surface-400">Monthly Requests</span>
                   <span className="text-sm font-medium text-surface-200">
-                    {project.monthlyRequests?.toLocaleString() || 0}
+                    {(project.monthly_requests || project.monthlyRequests || 0).toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -78,7 +78,7 @@ const ProjectGrid = ({ projects }) => {
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-surface-400">Cost This Month</span>
                   <span className="text-sm font-semibold text-accent-400">
-                    ${project.monthlyCost?.toFixed(2) || "0.00"}
+                    ${(project.monthly_cost || project.monthlyCost || 0).toFixed(2)}
                   </span>
                 </div>
               </div>

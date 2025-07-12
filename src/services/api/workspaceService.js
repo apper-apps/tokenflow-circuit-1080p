@@ -1,117 +1,249 @@
-import mockWorkspaces from '@/services/mockData/workspaces.json';
-
-let workspaces = [...mockWorkspaces];
-let nextId = Math.max(...workspaces.map(w => w.Id)) + 1;
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const workspaceService = {
   async getAll() {
-    await delay(300);
-    return [...workspaces];
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "description" } },
+          { field: { Name: "tier" } },
+          { field: { Name: "usage_quota" } },
+          { field: { Name: "current_usage" } },
+          { field: { Name: "created_at" } },
+          { field: { Name: "last_active_at" } },
+          { field: { Name: "team_members" } },
+          { field: { Name: "api_keys" } },
+          { field: { Name: "status" } },
+          { field: { Name: "region" } }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('workspace', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching workspaces:", error);
+      throw error;
+    }
   },
 
   async getById(id) {
-    await delay(200);
-    const workspace = workspaces.find(w => w.Id === parseInt(id));
-    if (!workspace) {
-      throw new Error('Workspace not found');
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "description" } },
+          { field: { Name: "tier" } },
+          { field: { Name: "usage_quota" } },
+          { field: { Name: "current_usage" } },
+          { field: { Name: "created_at" } },
+          { field: { Name: "last_active_at" } },
+          { field: { Name: "team_members" } },
+          { field: { Name: "api_keys" } },
+          { field: { Name: "status" } },
+          { field: { Name: "region" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById('workspace', id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching workspace with ID ${id}:`, error);
+      throw error;
     }
-    return { ...workspace };
   },
 
   async create(workspaceData) {
-    await delay(400);
-    
-    // Validate required fields
-    if (!workspaceData.name || !workspaceData.tier) {
-      throw new Error('Name and tier are required');
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const params = {
+        records: [{
+          Name: workspaceData.Name || workspaceData.name,
+          Tags: workspaceData.Tags || workspaceData.tags || "",
+          Owner: workspaceData.Owner || workspaceData.owner || "John Doe",
+          description: workspaceData.description || "",
+          tier: workspaceData.tier,
+          usage_quota: workspaceData.usage_quota || workspaceData.usageQuota || 
+                      (workspaceData.tier === 'free' ? 100000 : 
+                       workspaceData.tier === 'pro' ? 1000000 : 5000000),
+          current_usage: workspaceData.current_usage || workspaceData.currentUsage || 0,
+          created_at: workspaceData.created_at || workspaceData.createdAt || new Date().toISOString(),
+          last_active_at: workspaceData.last_active_at || workspaceData.lastActiveAt || new Date().toISOString(),
+          team_members: workspaceData.team_members || workspaceData.teamMembers || 1,
+          api_keys: workspaceData.api_keys || workspaceData.apiKeys || 0,
+          status: workspaceData.status || "active",
+          region: workspaceData.region || "us-east-1"
+        }]
+      };
+
+      const response = await apperClient.createRecord('workspace', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create workspace:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error creating workspace:", error);
+      throw error;
     }
-
-    // Check for duplicate names
-    if (workspaces.some(w => w.name.toLowerCase() === workspaceData.name.toLowerCase())) {
-      throw new Error('Workspace name already exists');
-    }
-
-    const newWorkspace = {
-      Id: nextId++,
-      name: workspaceData.name,
-      description: workspaceData.description || '',
-      tier: workspaceData.tier,
-      usageQuota: workspaceData.tier === 'free' ? 100000 : 
-                  workspaceData.tier === 'pro' ? 1000000 : 5000000,
-      currentUsage: 0,
-      createdAt: new Date().toISOString(),
-      lastActiveAt: new Date().toISOString(),
-      teamMembers: 1,
-      apiKeys: 0,
-      status: 'active',
-      owner: 'John Doe',
-      region: workspaceData.region || 'us-east-1'
-    };
-
-    workspaces.push(newWorkspace);
-    return { ...newWorkspace };
   },
 
   async update(id, updateData) {
-    await delay(300);
-    
-    const index = workspaces.findIndex(w => w.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error('Workspace not found');
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: updateData.Name || updateData.name,
+          Tags: updateData.Tags || updateData.tags,
+          Owner: updateData.Owner || updateData.owner,
+          description: updateData.description,
+          tier: updateData.tier,
+          usage_quota: updateData.usage_quota || updateData.usageQuota,
+          current_usage: updateData.current_usage || updateData.currentUsage,
+          created_at: updateData.created_at || updateData.createdAt,
+          last_active_at: updateData.last_active_at || updateData.lastActiveAt || new Date().toISOString(),
+          team_members: updateData.team_members || updateData.teamMembers,
+          api_keys: updateData.api_keys || updateData.apiKeys,
+          status: updateData.status,
+          region: updateData.region
+        }]
+      };
+
+      const response = await apperClient.updateRecord('workspace', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update workspace:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error updating workspace:", error);
+      throw error;
     }
-
-    // Check for duplicate names (excluding current workspace)
-    if (updateData.name && 
-        workspaces.some(w => w.Id !== parseInt(id) && 
-                      w.name.toLowerCase() === updateData.name.toLowerCase())) {
-      throw new Error('Workspace name already exists');
-    }
-
-    const updatedWorkspace = {
-      ...workspaces[index],
-      ...updateData,
-      Id: parseInt(id), // Ensure ID doesn't change
-      lastActiveAt: new Date().toISOString()
-    };
-
-    workspaces[index] = updatedWorkspace;
-    return { ...updatedWorkspace };
   },
 
   async delete(id) {
-    await delay(250);
-    
-    const index = workspaces.findIndex(w => w.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error('Workspace not found');
-    }
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
 
-    // Don't allow deleting the last workspace
-    if (workspaces.length === 1) {
-      throw new Error('Cannot delete the last workspace');
-    }
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
 
-    workspaces.splice(index, 1);
-    return true;
+      const response = await apperClient.deleteRecord('workspace', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting workspace:", error);
+      throw error;
+    }
   },
 
   async switchWorkspace(id) {
-    await delay(200);
-    
-    const workspace = workspaces.find(w => w.Id === parseInt(id));
-    if (!workspace) {
-      throw new Error('Workspace not found');
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Update last active time
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          last_active_at: new Date().toISOString()
+        }]
+      };
+
+      const response = await apperClient.updateRecord('workspace', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error switching workspace:", error);
+      throw error;
     }
-
-    // Update last active time
-    const index = workspaces.findIndex(w => w.Id === parseInt(id));
-    workspaces[index] = {
-      ...workspace,
-      lastActiveAt: new Date().toISOString()
-    };
-
-    return { ...workspaces[index] };
   }
 };

@@ -47,10 +47,10 @@ const Team = () => {
   const handleSearch = (term) => {
     if (term.trim() === "") {
       setFilteredMembers(members);
-    } else {
+} else {
       const filtered = members.filter(member =>
-        member.name.toLowerCase().includes(term.toLowerCase()) ||
-        member.email.toLowerCase().includes(term.toLowerCase())
+        (member.Name || member.name || "").toLowerCase().includes(term.toLowerCase()) ||
+        (member.email || "").toLowerCase().includes(term.toLowerCase())
       );
       setFilteredMembers(filtered);
     }
@@ -62,11 +62,12 @@ const Team = () => {
         toast.error("Please fill in all fields");
         return;
       }
-
-      const result = await teamService.create({
-        ...newMember,
+const result = await teamService.create({
+        Name: newMember.email.split("@")[0],
+        email: newMember.email,
+        role: newMember.role,
         status: "pending",
-        joinedAt: new Date().toISOString()
+        joined_at: new Date().toISOString()
       });
 
       setMembers([...members, result]);
@@ -217,8 +218,8 @@ const Team = () => {
                   <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
                     <ApperIcon name="User" size={20} className="text-white" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-surface-50">{member.name}</h3>
+<div className="flex-1">
+                    <h3 className="text-lg font-semibold text-surface-50">{member.Name || member.name}</h3>
                     <p className="text-sm text-surface-400">{member.email}</p>
                   </div>
                 </div>
@@ -246,13 +247,13 @@ const Team = () => {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-surface-400">Joined</span>
                     <span className="text-surface-200">
-                      {new Date(member.joinedAt).toLocaleDateString()}
+                      {new Date(member.joined_at || member.joinedAt).toLocaleDateString()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-surface-400">Last Active</span>
                     <span className="text-surface-200">
-                      {member.lastActive ? new Date(member.lastActive).toLocaleDateString() : "Never"}
+                      {(member.last_active || member.lastActive) ? new Date(member.last_active || member.lastActive).toLocaleDateString() : "Never"}
                     </span>
                   </div>
                 </div>

@@ -49,11 +49,11 @@ const APIKeyTable = ({ apiKeys, onValidate, onDelete }) => {
                     <span className="font-medium text-surface-200">{key.provider}</span>
                   </div>
                 </td>
-                <td className="p-4">
+<td className="p-4">
                   <div>
-                    <p className="font-medium text-surface-200">{key.name}</p>
+                    <p className="font-medium text-surface-200">{key.Name || key.name}</p>
                     <p className="text-sm text-surface-400">
-                      {key.encryptedKey ? "••••••••" + key.encryptedKey.slice(-4) : "No key"}
+                      {(key.encrypted_key || key.encryptedKey) ? "••••••••" + (key.encrypted_key || key.encryptedKey).slice(-4) : "No key"}
                     </p>
                   </div>
                 </td>
@@ -67,19 +67,19 @@ const APIKeyTable = ({ apiKeys, onValidate, onDelete }) => {
                 </td>
                 <td className="p-4">
                   <span className="text-sm text-surface-400">
-                    {key.lastValidated ? new Date(key.lastValidated).toLocaleDateString() : "Never"}
+                    {(key.last_validated || key.lastValidated) ? new Date(key.last_validated || key.lastValidated).toLocaleDateString() : "Never"}
                   </span>
                 </td>
                 <td className="p-4">
                   <div className="space-y-1">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-surface-400">Requests:</span>
-                      <Badge variant="outline" size="sm">{key.monthlyRequests || 0}</Badge>
+                      <Badge variant="outline" size="sm">{key.monthly_requests || key.monthlyRequests || 0}</Badge>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-surface-400">Cost:</span>
                       <span className="text-sm font-medium text-accent-400">
-                        ${(key.monthlyCost || 0).toFixed(2)}
+                        ${(key.monthly_cost || key.monthlyCost || 0).toFixed(2)}
                       </span>
                     </div>
                   </div>

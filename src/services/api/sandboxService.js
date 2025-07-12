@@ -1,71 +1,217 @@
-import mockScenarios from "@/services/mockData/sandboxScenarios.json";
-
-let configurations = [];
-let nextConfigId = 1;
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const sandboxService = {
   async getAll() {
-    await delay(300);
-    return [...configurations];
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "description" } },
+          { field: { Name: "model" } },
+          { field: { Name: "tokens" } },
+          { field: { Name: "complexity" } },
+          { field: { Name: "category" } },
+          { field: { Name: "parameters_temperature" } },
+          { field: { Name: "parameters_max_tokens" } },
+          { field: { Name: "parameters_top_p" } }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('sandbox_scenario', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching sandbox scenarios:", error);
+      throw error;
+    }
   },
 
   async getById(id) {
-    await delay(200);
-    const config = configurations.find(c => c.Id === parseInt(id));
-    if (!config) {
-      throw new Error(`Configuration with ID ${id} not found`);
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        fields: [
+          { field: { Name: "Name" } },
+          { field: { Name: "Tags" } },
+          { field: { Name: "Owner" } },
+          { field: { Name: "description" } },
+          { field: { Name: "model" } },
+          { field: { Name: "tokens" } },
+          { field: { Name: "complexity" } },
+          { field: { Name: "category" } },
+          { field: { Name: "parameters_temperature" } },
+          { field: { Name: "parameters_max_tokens" } },
+          { field: { Name: "parameters_top_p" } }
+        ]
+      };
+
+      const response = await apperClient.getRecordById('sandbox_scenario', id, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching sandbox scenario with ID ${id}:`, error);
+      throw error;
     }
-    return { ...config };
   },
 
   async create(config) {
-    await delay(400);
-    const newConfig = {
-      Id: nextConfigId++,
-      ...config,
-      createdAt: new Date().toISOString(),
-      name: config.name || `Test Config ${nextConfigId - 1}`
-    };
-    configurations.push(newConfig);
-    return { ...newConfig };
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const params = {
+        records: [{
+          Name: config.Name || config.name || `Test Config ${Date.now()}`,
+          Tags: config.Tags || config.tags || "",
+          Owner: config.Owner || config.owner,
+          description: config.description || "",
+          model: config.model || "",
+          tokens: config.tokens || 0,
+          complexity: config.complexity || "medium",
+          category: config.category || "test",
+          parameters_temperature: config.parameters_temperature || config.parameters?.temperature || 0.7,
+          parameters_max_tokens: config.parameters_max_tokens || config.parameters?.max_tokens || 150,
+          parameters_top_p: config.parameters_top_p || config.parameters?.top_p || 1.0
+        }]
+      };
+
+      const response = await apperClient.createRecord('sandbox_scenario', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create sandbox scenario:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error creating sandbox scenario:", error);
+      throw error;
+    }
   },
 
   async update(id, data) {
-    await delay(300);
-    const index = configurations.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error(`Configuration with ID ${id} not found`);
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      // Only include Updateable fields
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: data.Name || data.name,
+          Tags: data.Tags || data.tags,
+          Owner: data.Owner || data.owner,
+          description: data.description,
+          model: data.model,
+          tokens: data.tokens,
+          complexity: data.complexity,
+          category: data.category,
+          parameters_temperature: data.parameters_temperature || data.parameters?.temperature,
+          parameters_max_tokens: data.parameters_max_tokens || data.parameters?.max_tokens,
+          parameters_top_p: data.parameters_top_p || data.parameters?.top_p
+        }]
+      };
+
+      const response = await apperClient.updateRecord('sandbox_scenario', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      if (response.results) {
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to update sandbox scenario:${JSON.stringify(failedRecords)}`);
+          failedRecords.forEach(record => {
+            if (record.message) throw new Error(record.message);
+          });
+        }
+        
+        const successfulRecords = response.results.filter(result => result.success);
+        return successfulRecords[0]?.data;
+      }
+    } catch (error) {
+      console.error("Error updating sandbox scenario:", error);
+      throw error;
     }
-    
-    configurations[index] = {
-      ...configurations[index],
-      ...data,
-      Id: parseInt(id),
-      updatedAt: new Date().toISOString()
-    };
-    
-    return { ...configurations[index] };
   },
 
   async delete(id) {
-    await delay(300);
-    const index = configurations.findIndex(c => c.Id === parseInt(id));
-    if (index === -1) {
-      throw new Error(`Configuration with ID ${id} not found`);
+    try {
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await apperClient.deleteRecord('sandbox_scenario', params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        throw new Error(response.message);
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error deleting sandbox scenario:", error);
+      throw error;
     }
-    configurations.splice(index, 1);
-    return true;
   },
 
   async getScenarios() {
-    await delay(300);
-    return [...mockScenarios];
+    // Delegate to getAll for scenarios
+    return this.getAll();
   },
 
   async runTest(ruleId, testData) {
-    await delay(1500); // Simulate test execution time
+    // Simulate test execution time
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Mock test results based on input
     const providers = ['OpenAI', 'Anthropic', 'Google', 'Cohere', 'Hugging Face'];
