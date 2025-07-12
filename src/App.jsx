@@ -43,7 +43,8 @@ function App() {
         </Routes>
       </motion.div>
       </WorkspaceProvider>
-    </ThemeProvider>
+</ThemeProvider>
+  );
 }
 
 export default App;
