@@ -106,18 +106,26 @@ export const providerMonitorService = {
       const providers = response.data || [];
       
       // Process and update each provider with real-time simulation
-      return providers.map(provider => {
-        // Convert database fields to match component expectations
+return providers.map(provider => {
+        // Convert database fields to match component expectations (camelCase)
+        let latencyHistory = [];
+        try {
+          latencyHistory = JSON.parse(provider.latency_history || '[]');
+        } catch (error) {
+          console.error('Error parsing latency_history for provider:', provider.Name, error);
+          latencyHistory = [];
+        }
+        
         const processedProvider = {
           name: provider.Name,
           status: provider.status,
           latency: provider.latency,
           availability: provider.availability,
-          base_latency: provider.base_latency,
-          avg_latency: provider.avg_latency,
-          min_latency: provider.min_latency,
-          max_latency: provider.max_latency,
-          latency_history: JSON.parse(provider.latency_history || '[]'),
+          baseLatency: provider.base_latency,
+          avgLatency: provider.avg_latency,
+          minLatency: provider.min_latency,
+          maxLatency: provider.max_latency,
+          latencyHistory: latencyHistory,
           region: provider.region,
           endpoint: provider.endpoint
         };
