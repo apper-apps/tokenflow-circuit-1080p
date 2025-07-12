@@ -27,9 +27,10 @@ export const workspaceService = {
 
       const response = await apperClient.fetchRecords('workspace', params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to fetch workspaces';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       return response.data || [];
@@ -67,9 +68,10 @@ export const workspaceService = {
 
       const response = await apperClient.getRecordById('workspace', id, params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to fetch workspace';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       return response.data;
@@ -110,18 +112,20 @@ export const workspaceService = {
 
       const response = await apperClient.createRecord('workspace', params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to create workspace';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       if (response.results) {
         const failedRecords = response.results.filter(result => !result.success);
         
         if (failedRecords.length > 0) {
-          console.error(`Failed to create workspace:${JSON.stringify(failedRecords)}`);
+console.error(`Failed to create workspace:${JSON.stringify(failedRecords)}`);
           failedRecords.forEach(record => {
-            if (record.message) throw new Error(record.message);
+            const errorMessage = record.message || 'Failed to create some workspaces';
+            throw new Error(errorMessage);
           });
         }
         
@@ -164,18 +168,20 @@ export const workspaceService = {
 
       const response = await apperClient.updateRecord('workspace', params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to update workspace';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       if (response.results) {
         const failedRecords = response.results.filter(result => !result.success);
         
         if (failedRecords.length > 0) {
-          console.error(`Failed to update workspace:${JSON.stringify(failedRecords)}`);
+console.error(`Failed to update workspace:${JSON.stringify(failedRecords)}`);
           failedRecords.forEach(record => {
-            if (record.message) throw new Error(record.message);
+            const errorMessage = record.message || 'Failed to update some workspaces';
+            throw new Error(errorMessage);
           });
         }
         
@@ -202,9 +208,10 @@ export const workspaceService = {
 
       const response = await apperClient.deleteRecord('workspace', params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to delete workspace';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       return true;
@@ -232,9 +239,10 @@ export const workspaceService = {
 
       const response = await apperClient.updateRecord('workspace', params);
       
-      if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+if (!response.success) {
+        const errorMessage = response.message || 'Failed to switch workspace';
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
 
       if (response.results) {
