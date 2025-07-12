@@ -10,10 +10,35 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Manrope', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark theme (default) */
+body.dark,
+.dark {
   background-color: #0f172a;
   color: #f8fafc;
 }
+
+/* Light theme */
+body.light,
+.light {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.light .bg-surface-900 { background-color: #f8fafc; }
+.light .bg-surface-800 { background-color: #f1f5f9; }
+.light .bg-surface-700 { background-color: #e2e8f0; }
+.light .bg-surface-600 { background-color: #cbd5e1; }
+.light .text-surface-50 { color: #1e293b; }
+.light .text-surface-100 { color: #334155; }
+.light .text-surface-200 { color: #475569; }
+.light .text-surface-300 { color: #64748b; }
+.light .text-surface-400 { color: #94a3b8; }
+.light .border-surface-700 { border-color: #e2e8f0; }
+.light .border-surface-600 { border-color: #cbd5e1; }
 
 /* Toast Customization */
 .Toastify__toast-container {

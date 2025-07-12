@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "title": "Getting Started with TokenFlow API",
+    "content": "Welcome to TokenFlow API! This guide will help you get started with our powerful token optimization platform. First, you'll need to obtain an API key from your dashboard. Navigate to the API Keys section and create a new key with the appropriate permissions. The base URL for all API calls is https://api.tokenflow.pro/v1. All requests must include your API key in the Authorization header as a Bearer token. Here's a basic example of making your first API call using curl...",
+    "category": "api",
+    "tags": ["getting-started", "api-key", "authentication"],
+    "readTime": 5,
+    "createdAt": "2024-01-15T10:00:00Z",
+    "updatedAt": "2024-01-15T10:00:00Z"
+  },
+  {
+    "Id": 2,
+    "title": "Token Optimization Best Practices",
+    "content": "Token optimization is crucial for reducing API costs and improving performance. Here are the top strategies: 1. Use concise prompts - Remove unnecessary words and context. 2. Implement caching - Store responses for frequently asked questions. 3. Choose the right model - Use smaller models for simple tasks and larger models only when necessary. 4. Set appropriate max_tokens limits - This prevents unexpected large responses. 5. Batch similar requests when possible. These practices can reduce your token usage by 30-40%.",
+    "category": "optimization",
+    "tags": ["cost-reduction", "best-practices", "performance"],
+    "readTime": 8,
+    "createdAt": "2024-01-16T14:30:00Z",
+    "updatedAt": "2024-01-16T14:30:00Z"
+  },
+  {
+    "Id": 3,
+    "title": "Understanding Rate Limits",
+    "content": "TokenFlow implements rate limits to ensure fair usage and system stability. Free tier users have a limit of 1,000 requests per hour and 50,000 tokens per day. Pro tier users get 10,000 requests per hour and 500,000 tokens per day. Enterprise customers can request custom limits. When you hit a rate limit, you'll receive a 429 status code with details about when you can make your next request. Implement exponential backoff in your applications to handle rate limiting gracefully.",
+    "category": "api",
+    "tags": ["rate-limits", "throttling", "enterprise"],
+    "readTime": 4,
+    "createdAt": "2024-01-17T09:15:00Z",
+    "updatedAt": "2024-01-17T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "title": "Implementing Response Caching",
+    "content": "Caching is one of the most effective ways to reduce token usage and improve response times. Implement client-side caching for frequently requested content. Use a simple Map or more sophisticated solutions like Redis for distributed applications. Consider cache invalidation strategies - TTL-based expiration works well for most use cases. For user-specific content, implement per-user caching with appropriate security measures. Remember to cache both successful responses and handled errors to avoid repeated failed requests.",
+    "category": "optimization",
+    "tags": ["caching", "performance", "redis"],
+    "readTime": 6,
+    "createdAt": "2024-01-18T11:45:00Z",
+    "updatedAt": "2024-01-18T11:45:00Z"
+  },
+  {
+    "Id": 5,
+    "title": "Troubleshooting Common API Errors",
+    "content": "Common API errors and their solutions: 401 Unauthorized - Check your API key and ensure it's included in the Authorization header. 403 Forbidden - Your API key may not have the required permissions or your account may be suspended. 429 Too Many Requests - You've hit rate limits, implement exponential backoff. 500 Internal Server Error - This is on our end, check our status page and try again later. 400 Bad Request - Check your request format and parameters. Always log error responses for debugging and implement proper error handling in your applications.",
+    "category": "troubleshooting",
+    "tags": ["errors", "debugging", "http-status"],
+    "readTime": 7,
+    "createdAt": "2024-01-19T16:20:00Z",
+    "updatedAt": "2024-01-19T16:20:00Z"
+  },
+  {
+    "Id": 6,
+    "title": "Managing Token Costs Effectively",
+    "content": "Understanding and managing token costs is essential for budget control. Tokens are charged for both input and output text. Different models have different pricing - GPT-3.5 is significantly cheaper than GPT-4 for most tasks. Monitor your usage dashboard regularly and set up billing alerts. Use the smallest model that meets your needs. For bulk processing, consider our batch API which offers discounted rates. Implement token counting in your application to track usage before making requests.",
+    "category": "tokens",
+    "tags": ["pricing", "billing", "cost-management"],
+    "readTime": 5,
+    "createdAt": "2024-01-20T13:10:00Z",
+    "updatedAt": "2024-01-20T13:10:00Z"
+  },
+  {
+    "Id": 7,
+    "title": "Setting Up Webhooks for Real-time Updates",
+    "content": "Webhooks allow you to receive real-time notifications about various events in your TokenFlow account. Set up webhooks in your dashboard to receive notifications about usage thresholds, billing events, or API key changes. Ensure your webhook endpoint returns a 200 status code and implements proper security verification. We recommend using HTTPS endpoints and verifying the webhook signature for security. Webhook retries are attempted up to 3 times with exponential backoff.",
+    "category": "api",
+    "tags": ["webhooks", "real-time", "notifications"],
+    "readTime": 6,
+    "createdAt": "2024-01-21T10:30:00Z",
+    "updatedAt": "2024-01-21T10:30:00Z"
+  },
+  {
+    "Id": 8,
+    "title": "Advanced Prompt Engineering Techniques",
+    "content": "Advanced prompt engineering can significantly reduce token usage while improving output quality. Use few-shot learning with carefully selected examples. Implement chain-of-thought prompting for complex reasoning tasks. Use system messages to set context efficiently. Break complex tasks into smaller, focused prompts. Use templates for consistent formatting. Implement prompt compression techniques to reduce input tokens. A/B test different prompt styles to find the most efficient approach for your use case.",
+    "category": "optimization",
+    "tags": ["prompting", "few-shot", "chain-of-thought"],
+    "readTime": 9,
+    "createdAt": "2024-01-22T15:45:00Z",
+    "updatedAt": "2024-01-22T15:45:00Z"
+  }
+]

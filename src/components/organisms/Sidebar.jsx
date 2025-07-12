@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import ApperIcon from "@/components/ApperIcon";
+import React from "react";
 import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
 
 const Sidebar = () => {
 const navigation = [
@@ -13,8 +14,9 @@ const navigation = [
     { name: "Sandbox", href: "/sandbox", icon: "TestTube" },
     { name: "Analytics", href: "/analytics", icon: "TrendingUp" },
     { name: "Team", href: "/team", icon: "Users" },
+    { name: "Help Center", href: "/help", icon: "HelpCircle" },
     { name: "Settings", href: "/settings", icon: "Settings" }
-  ];
+];
 
   return (
     <div className="w-64 bg-surface-800 border-r border-surface-700 h-screen fixed left-0 top-0 flex flex-col">

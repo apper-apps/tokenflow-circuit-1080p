@@ -1,8 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import { motion } from "framer-motion";
-import RoutingSandbox from "@/components/pages/RoutingSandbox";
 import React from "react";
+import HelpCenter from "@/components/pages/HelpCenter";
+import { ThemeProvider } from "@/hooks/useTheme";
 import Layout from "@/components/organisms/Layout";
+import RoutingSandbox from "@/components/pages/RoutingSandbox";
 import Team from "@/components/pages/Team";
 import Settings from "@/components/pages/Settings";
 import APIKeys from "@/components/pages/APIKeys";
@@ -16,7 +18,8 @@ import { WorkspaceProvider } from "@/hooks/useWorkspace";
 
 function App() {
   return (
-    <WorkspaceProvider>
+    <ThemeProvider>
+      <WorkspaceProvider>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -32,14 +35,15 @@ function App() {
             <Route path="routing-rules" element={<RoutingRules />} />
             <Route path="workspaces" element={<Workspaces />} />
             <Route path="sandbox" element={<RoutingSandbox />} />
-            <Route path="analytics" element={<Analytics />} />
+<Route path="analytics" element={<Analytics />} />
             <Route path="team" element={<Team />} />
+            <Route path="help" element={<HelpCenter />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </motion.div>
-    </WorkspaceProvider>
-  );
+      </WorkspaceProvider>
+    </ThemeProvider>
 }
 
 export default App;

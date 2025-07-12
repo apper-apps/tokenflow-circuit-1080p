@@ -5,12 +5,14 @@ import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import { useMobileMenuContext } from "@/hooks/useMobileMenu";
 import { useWorkspace } from "@/hooks/useWorkspace";
+import { useTheme } from "@/hooks/useTheme";
 
 const Header = () => {
   const [notifications] = useState(3);
   const [showWorkspaceDropdown, setShowWorkspaceDropdown] = useState(false);
   const { isOpen, toggle } = useMobileMenuContext();
   const { currentWorkspace, workspaces, switchWorkspace } = useWorkspace();
+  const { theme, toggleTheme } = useTheme();
 
   const handleWorkspaceSwitch = async (workspace) => {
     if (workspace.Id !== currentWorkspace?.Id) {
@@ -23,7 +25,7 @@ const Header = () => {
     }
   };
   return (
-    <header className="bg-surface-800 border-b border-surface-700 px-6 py-4">
+<header className="bg-surface-800 border-b border-surface-700 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Mobile Menu Button */}
         <div className="flex items-center space-x-4">
@@ -36,7 +38,48 @@ const Header = () => {
             <ApperIcon name="Menu" size={20} />
           </Button>
           
-{/* Workspace Selector */}
+          {/* Page Title */}
+          <div className="hidden lg:block">
+            <h1 className="text-lg font-semibold text-surface-50">TokenFlow Pro</h1>
+          </div>
+        </div>
+
+        {/* Header Actions */}
+        <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={toggleTheme}
+            className="hover:bg-surface-700"
+          >
+            <ApperIcon 
+              name={theme === 'dark' ? 'Sun' : 'Moon'} 
+              size={20} 
+              className="text-surface-300 hover:text-surface-100" 
+            />
+          </Button>
+
+          {/* Notifications */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="relative"
+          >
+            <Button variant="ghost" size="sm">
+              <ApperIcon name="Bell" size={20} />
+              {notifications > 0 && (
+                <Badge 
+                  variant="danger" 
+                  size="sm" 
+                  className="absolute -top-2 -right-2 min-w-[20px] h-5 flex items-center justify-center text-xs"
+                >
+                  {notifications}
+                </Badge>
+              )}
+            </Button>
+          </motion.div>
+
+          {/* Workspace Selector */}
           <div className="relative">
             <button
               onClick={() => setShowWorkspaceDropdown(!showWorkspaceDropdown)}
@@ -115,29 +158,7 @@ const Header = () => {
                 onClick={() => setShowWorkspaceDropdown(false)}
               />
             )}
-          </div>
-        </div>
-
-        {/* Header Actions */}
-        <div className="flex items-center space-x-4">
-          {/* Notifications */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="relative"
-          >
-            <Button variant="ghost" size="sm">
-              <ApperIcon name="Bell" size={20} />
-              {notifications > 0 && (
-                <Badge 
-                  variant="danger" 
-                  size="sm" 
-                  className="absolute -top-2 -right-2 min-w-[20px] h-5 flex items-center justify-center text-xs"
-                >
-                  {notifications}
-                </Badge>
-              )}
-            </Button>
-          </motion.div>
+</div>
 
           {/* User Profile */}
           <div className="flex items-center space-x-3">

@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -55,9 +56,10 @@ export default {
           800: '#1e293b',
           900: '#0f172a',
         }
-      },
+},
       fontFamily: {
-        'inter': ['Inter', 'sans-serif'],
+        'manrope': ['Manrope', 'sans-serif'],
+        'sans': ['Manrope', 'sans-serif'],
       },
       animation: {
         'shimmer': 'shimmer 2s linear infinite',

@@ -3,8 +3,16 @@ import Header from "@/components/organisms/Header";
 import Sidebar from "@/components/organisms/Sidebar";
 import MobileSidebar from "@/components/organisms/MobileSidebar";
 import { MobileMenuProvider } from "@/hooks/useMobileMenu";
+import { useTheme } from "@/hooks/useTheme";
+import { useEffect } from "react";
 
 const Layout = () => {
+  const { theme } = useTheme();
+  
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
 return (
     <MobileMenuProvider>
       <div className="min-h-screen bg-surface-900 flex">
