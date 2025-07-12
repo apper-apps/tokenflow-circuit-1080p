@@ -1,13 +1,6 @@
 export const workspaceService = {
-  async getAll() {
+async getAll() {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
-
-// Initialize ApperClient with Project ID and Public Key
       const { ApperClient } = window.ApperSDK;
       const apperClient = new ApperClient({
         apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
@@ -32,11 +25,9 @@ export const workspaceService = {
         ]
       };
 
-      const response = await apperClient.fetchRecords("workspace", params);
-
       const response = await apperClient.fetchRecords('workspace', params);
       
-if (!response.success) {
+      if (!response.success) {
         const errorMessage = response.message || 'Failed to fetch workspaces';
         console.error(errorMessage);
         throw new Error(errorMessage);
@@ -49,15 +40,8 @@ if (!response.success) {
     }
   },
 
-  async getById(id) {
+async getById(id) {
     try {
-      const { ApperClient } = window.ApperSDK;
-      const apperClient = new ApperClient({
-        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
-        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
-      });
-
-// Initialize ApperClient with Project ID and Public Key
       const { ApperClient } = window.ApperSDK;
       const apperClient = new ApperClient({
         apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
@@ -82,11 +66,9 @@ if (!response.success) {
         ]
       };
 
-      const response = await apperClient.getRecordById("workspace", id, params);
-
       const response = await apperClient.getRecordById('workspace', id, params);
       
-if (!response.success) {
+      if (!response.success) {
         const errorMessage = response.message || 'Failed to fetch workspace';
         console.error(errorMessage);
         throw new Error(errorMessage);
