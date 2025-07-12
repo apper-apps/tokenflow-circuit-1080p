@@ -1,0 +1,62 @@
+[
+  {
+    "Id": 1,
+    "name": "AI Workspace",
+    "description": "TokenFlow Pro optimization workspace",
+    "tier": "pro",
+    "usageQuota": 1000000,
+    "currentUsage": 245678,
+    "createdAt": "2024-01-15T10:00:00Z",
+    "lastActiveAt": "2024-01-20T14:30:00Z",
+    "teamMembers": 4,
+    "apiKeys": 3,
+    "status": "active",
+    "owner": "John Doe",
+    "region": "us-east-1"
+  },
+  {
+    "Id": 2,
+    "name": "Development",
+    "description": "Development and testing environment",
+    "tier": "free",
+    "usageQuota": 100000,
+    "currentUsage": 15420,
+    "createdAt": "2024-01-10T08:00:00Z",
+    "lastActiveAt": "2024-01-19T16:45:00Z",
+    "teamMembers": 2,
+    "apiKeys": 1,
+    "status": "active",
+    "owner": "John Doe",
+    "region": "us-west-2"
+  },
+  {
+    "Id": 3,
+    "name": "Production",
+    "description": "Live production environment",
+    "tier": "enterprise",
+    "usageQuota": 5000000,
+    "currentUsage": 892340,
+    "createdAt": "2024-01-05T12:00:00Z",
+    "lastActiveAt": "2024-01-20T18:20:00Z",
+    "teamMembers": 8,
+    "apiKeys": 5,
+    "status": "active",
+    "owner": "John Doe",
+    "region": "eu-west-1"
+  },
+  {
+    "Id": 4,
+    "name": "Staging",
+    "description": "Pre-production testing workspace",
+    "tier": "pro",
+    "usageQuota": 500000,
+    "currentUsage": 67800,
+    "createdAt": "2024-01-12T14:00:00Z",
+    "lastActiveAt": "2024-01-18T11:15:00Z",
+    "teamMembers": 3,
+    "apiKeys": 2,
+    "status": "paused",
+    "owner": "John Doe",
+    "region": "us-east-1"
+  }
+]

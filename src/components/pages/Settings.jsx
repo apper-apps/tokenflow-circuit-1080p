@@ -10,7 +10,9 @@ import Badge from "@/components/atoms/Badge";
 import { toast } from "react-toastify";
 import { teamService } from "@/services/api/teamService";
 import { apiKeyService } from "@/services/api/apiKeyService";
+import { useWorkspace } from "@/hooks/useWorkspace";
 const Settings = () => {
+  const { currentWorkspace, updateWorkspace } = useWorkspace();
   const [workspace, setWorkspace] = useState({
     name: "AI Workspace",
     description: "TokenFlow Pro optimization workspace",
@@ -107,8 +109,16 @@ const tierOptions = [
     }
   };
 
-  const handleSaveWorkspace = () => {
-    toast.success("Workspace settings saved successfully");
+const handleSaveWorkspace = async () => {
+    if (currentWorkspace) {
+      try {
+        await updateWorkspace(currentWorkspace.Id, workspace);
+      } catch (error) {
+        // Error handling done in context
+      }
+    } else {
+      toast.success("Workspace settings saved successfully");
+    }
   };
 
   const handleSaveNotifications = () => {
@@ -284,10 +294,21 @@ const tierOptions = [
     toast.success("New backup codes generated");
 };
 
-  useEffect(() => {
+useEffect(() => {
     loadTeamMembers();
     loadApiKeys();
-  }, []);
+    
+    // Sync workspace state with current workspace
+    if (currentWorkspace) {
+      setWorkspace({
+        name: currentWorkspace.name,
+        description: currentWorkspace.description,
+        tier: currentWorkspace.tier,
+        usageQuota: currentWorkspace.usageQuota,
+        currentUsage: currentWorkspace.currentUsage
+      });
+    }
+  }, [currentWorkspace]);
   return (
     <div className="space-y-6">
       {/* Header */}
