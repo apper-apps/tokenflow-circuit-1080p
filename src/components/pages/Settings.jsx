@@ -8,7 +8,8 @@ import Input from "@/components/atoms/Input";
 import Select from "@/components/atoms/Select";
 import Badge from "@/components/atoms/Badge";
 import { toast } from "react-toastify";
-
+import { teamService } from "@/services/api/teamService";
+import { apiKeyService } from "@/services/api/apiKeyService";
 const Settings = () => {
   const [workspace, setWorkspace] = useState({
     name: "AI Workspace",
@@ -25,7 +26,7 @@ const Settings = () => {
     weeklyReports: true
   });
 
-const [security, setSecurity] = useState({
+  const [security, setSecurity] = useState({
     twoFactorAuth: false,
     sessionTimeout: 24,
     ipWhitelist: "",
@@ -36,9 +37,25 @@ const [security, setSecurity] = useState({
     qrCodeDataUrl: ""
   });
 
-  const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
+  // Team management state
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [apiKeys, setApiKeys] = useState([]);
+  const [loadingTeam, setLoadingTeam] = useState(true);
+  const [loadingKeys, setLoadingKeys] = useState(true);
+  const [showTeamInvite, setShowTeamInvite] = useState(false);
+  const [showApiKeyForm, setShowApiKeyForm] = useState(false);
+  const [newTeamMember, setNewTeamMember] = useState({
+    email: "",
+    role: "user"
+  });
+  const [newApiKey, setNewApiKey] = useState({
+    provider: "",
+    name: "",
+    encryptedKey: ""
+  });
 
-  const tierOptions = [
+  const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
+const tierOptions = [
     { value: "free", label: "Free Tier" },
     { value: "pro", label: "Pro Tier" },
     { value: "enterprise", label: "Enterprise" }
@@ -51,6 +68,45 @@ const [security, setSecurity] = useState({
     { value: 168, label: "1 Week" }
   ];
 
+  const roleOptions = [
+    { value: "admin", label: "Admin" },
+    { value: "user", label: "User" },
+    { value: "viewer", label: "Viewer" }
+  ];
+
+  const providerOptions = [
+    { value: "", label: "Select Provider" },
+    { value: "OpenAI", label: "OpenAI" },
+    { value: "Anthropic", label: "Anthropic" },
+    { value: "Google", label: "Google Gemini" },
+    { value: "Cohere", label: "Cohere" },
+    { value: "Mistral", label: "Mistral" }
+  ];
+// Load team members and API keys
+  const loadTeamMembers = async () => {
+    try {
+      setLoadingTeam(true);
+      const result = await teamService.getAll();
+      setTeamMembers(result);
+    } catch (err) {
+      toast.error("Failed to load team members");
+    } finally {
+      setLoadingTeam(false);
+    }
+  };
+
+  const loadApiKeys = async () => {
+    try {
+      setLoadingKeys(true);
+      const result = await apiKeyService.getAll();
+      setApiKeys(result);
+    } catch (err) {
+      toast.error("Failed to load API keys");
+    } finally {
+      setLoadingKeys(false);
+    }
+  };
+
   const handleSaveWorkspace = () => {
     toast.success("Workspace settings saved successfully");
   };
@@ -59,10 +115,89 @@ const [security, setSecurity] = useState({
     toast.success("Notification settings saved successfully");
   };
 
-const handleSaveSecurity = () => {
+  const handleSaveSecurity = () => {
     toast.success("Security settings saved successfully");
   };
 
+  // Team management handlers
+  const handleInviteTeamMember = async () => {
+    try {
+      if (!newTeamMember.email || !newTeamMember.role) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+
+      const result = await teamService.create({
+        ...newTeamMember,
+        status: "pending",
+        joinedAt: new Date().toISOString()
+      });
+
+      setTeamMembers([...teamMembers, result]);
+      setNewTeamMember({ email: "", role: "user" });
+      setShowTeamInvite(false);
+      toast.success("Team member invited successfully");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleRemoveTeamMember = async (memberId) => {
+    try {
+      if (confirm("Are you sure you want to remove this team member?")) {
+        await teamService.delete(memberId);
+        setTeamMembers(teamMembers.filter(m => m.Id !== memberId));
+        toast.success("Team member removed successfully");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  // API key management handlers
+  const handleAddApiKey = async () => {
+    try {
+      if (!newApiKey.provider || !newApiKey.name || !newApiKey.encryptedKey) {
+        toast.error("Please fill in all fields");
+        return;
+      }
+
+      const result = await apiKeyService.create({
+        ...newApiKey,
+        status: "pending",
+        lastValidated: null
+      });
+
+      setApiKeys([...apiKeys, result]);
+      setNewApiKey({ provider: "", name: "", encryptedKey: "" });
+      setShowApiKeyForm(false);
+      toast.success("API key added successfully");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteApiKey = async (keyId) => {
+    try {
+      if (confirm("Are you sure you want to delete this API key?")) {
+        await apiKeyService.delete(keyId);
+        setApiKeys(apiKeys.filter(k => k.Id !== keyId));
+        toast.success("API key deleted successfully");
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleValidateApiKey = async (keyId) => {
+    try {
+      const updatedKey = await apiKeyService.update(keyId, { status: "active" });
+      setApiKeys(apiKeys.map(key => key.Id === keyId ? updatedKey : key));
+      toast.success("API key validated successfully");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
   const generateTwoFactorSecret = () => {
     // Generate a random base32 secret
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -147,8 +282,12 @@ const handleSaveSecurity = () => {
       backupCodes
     }));
     toast.success("New backup codes generated");
-  };
+};
 
+  useEffect(() => {
+    loadTeamMembers();
+    loadApiKeys();
+  }, []);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -159,70 +298,229 @@ const handleSaveSecurity = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Workspace Settings */}
+<div className="space-y-6">
+        {/* Workspace Overview */}
         <Card className="p-6">
           <div className="flex items-center space-x-3 mb-6">
             <div className="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <ApperIcon name="Settings" size={20} className="text-white" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-50">Workspace</h3>
+            <h3 className="text-lg font-semibold text-surface-50">Workspace Settings</h3>
           </div>
 
-          <div className="space-y-4">
-            <Input
-              label="Workspace Name"
-              value={workspace.name}
-              onChange={(e) => setWorkspace({...workspace, name: e.target.value})}
-            />
-            
-            <div>
-              <label className="block text-sm font-medium text-surface-200 mb-2">
-                Description
-              </label>
-              <textarea
-                value={workspace.description}
-                onChange={(e) => setWorkspace({...workspace, description: e.target.value})}
-                rows={3}
-                className="w-full px-3 py-2 bg-surface-800 border border-surface-600 rounded-lg text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <Input
+                label="Workspace Name"
+                value={workspace.name}
+                onChange={(e) => setWorkspace({...workspace, name: e.target.value})}
+              />
+              
+              <div>
+                <label className="block text-sm font-medium text-surface-200 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={workspace.description}
+                  onChange={(e) => setWorkspace({...workspace, description: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 bg-surface-800 border border-surface-600 rounded-lg text-surface-100 placeholder-surface-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+                />
+              </div>
+
+              <Select
+                label="Subscription Tier"
+                options={tierOptions}
+                value={workspace.tier}
+                onChange={(e) => setWorkspace({...workspace, tier: e.target.value})}
               />
             </div>
 
-            <Select
-              label="Subscription Tier"
-              options={tierOptions}
-              value={workspace.tier}
-              onChange={(e) => setWorkspace({...workspace, tier: e.target.value})}
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-surface-200 mb-2">
-                Usage Quota
-              </label>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-surface-400">
-                    {workspace.currentUsage.toLocaleString()} / {workspace.usageQuota.toLocaleString()}
-                  </span>
-                  <Badge variant="primary" size="sm">
-                    {Math.round((workspace.currentUsage / workspace.usageQuota) * 100)}%
-                  </Badge>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-surface-200 mb-2">
+                  Usage Quota
+                </label>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-surface-400">
+                      {workspace.currentUsage.toLocaleString()} / {workspace.usageQuota.toLocaleString()}
+                    </span>
+                    <Badge variant="primary" size="sm">
+                      {Math.round((workspace.currentUsage / workspace.usageQuota) * 100)}%
+                    </Badge>
+                  </div>
+                  <div className="w-full bg-surface-700 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500"
+                      style={{ width: `${(workspace.currentUsage / workspace.usageQuota) * 100}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-surface-700 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${(workspace.currentUsage / workspace.usageQuota) * 100}%` }}
-                  />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-3 bg-surface-800/50 rounded-lg border border-surface-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-surface-400">Team Members</span>
+                    <span className="text-lg font-semibold text-surface-50">{teamMembers.length}</span>
+                  </div>
+                </div>
+                <div className="p-3 bg-surface-800/50 rounded-lg border border-surface-600">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-surface-400">API Keys</span>
+                    <span className="text-lg font-semibold text-surface-50">{apiKeys.length}</span>
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <Button variant="primary" onClick={handleSaveWorkspace} className="w-full">
-              <ApperIcon name="Save" size={16} className="mr-2" />
-              Save Workspace
+          <Button variant="primary" onClick={handleSaveWorkspace} className="w-full mt-6">
+            <ApperIcon name="Save" size={16} className="mr-2" />
+            Save Workspace Settings
+          </Button>
+        </Card>
+
+        {/* Team Members Section */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-accent-500 to-accent-600 rounded-lg flex items-center justify-center">
+                <ApperIcon name="Users" size={20} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-surface-50">Team Members</h3>
+            </div>
+            <Button variant="primary" size="sm" onClick={() => setShowTeamInvite(true)}>
+              <ApperIcon name="UserPlus" size={16} className="mr-2" />
+              Invite Member
             </Button>
           </div>
+
+          {loadingTeam ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+            </div>
+          ) : teamMembers.length === 0 ? (
+            <div className="text-center py-8">
+              <ApperIcon name="Users" size={48} className="mx-auto text-surface-600 mb-4" />
+              <p className="text-surface-400">No team members yet</p>
+              <Button variant="outline" size="sm" onClick={() => setShowTeamInvite(true)} className="mt-4">
+                Invite your first team member
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {teamMembers.slice(0, 6).map((member) => (
+                <div key={member.Id} className="p-4 bg-surface-800/50 rounded-lg border border-surface-600">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center">
+                      <ApperIcon name="User" size={16} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-surface-50 truncate">{member.name}</p>
+                      <p className="text-xs text-surface-400 truncate">{member.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Badge variant={member.role === "admin" ? "primary" : "secondary"} size="sm">
+                      {member.role}
+                    </Badge>
+                    <Button variant="ghost" size="sm" onClick={() => handleRemoveTeamMember(member.Id)}>
+                      <ApperIcon name="UserMinus" size={14} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {teamMembers.length > 6 && (
+            <div className="mt-4 text-center">
+              <Button variant="outline" size="sm">
+                View All {teamMembers.length} Members
+              </Button>
+            </div>
+          )}
         </Card>
+
+        {/* API Keys Section */}
+        <Card className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
+                <ApperIcon name="Key" size={20} className="text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-surface-50">AI API Keys</h3>
+            </div>
+            <Button variant="primary" size="sm" onClick={() => setShowApiKeyForm(true)}>
+              <ApperIcon name="Plus" size={16} className="mr-2" />
+              Add API Key
+            </Button>
+          </div>
+
+          {loadingKeys ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+            </div>
+          ) : apiKeys.length === 0 ? (
+            <div className="text-center py-8">
+              <ApperIcon name="Key" size={48} className="mx-auto text-surface-600 mb-4" />
+              <p className="text-surface-400">No API keys configured</p>
+              <Button variant="outline" size="sm" onClick={() => setShowApiKeyForm(true)} className="mt-4">
+                Add your first API key
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {apiKeys.slice(0, 5).map((key) => (
+                <div key={key.Id} className="p-4 bg-surface-800/50 rounded-lg border border-surface-600">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                        <ApperIcon name="Key" size={16} className="text-white" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-surface-50">{key.name}</p>
+                        <p className="text-xs text-surface-400">{key.provider}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Badge 
+                        variant={
+                          key.status === "active" ? "success" :
+                          key.status === "pending" ? "warning" : "danger"
+                        } 
+                        size="sm"
+                      >
+                        {key.status}
+                      </Badge>
+                      {key.status === "pending" && (
+                        <Button variant="outline" size="sm" onClick={() => handleValidateApiKey(key.Id)}>
+                          <ApperIcon name="Check" size={14} />
+                        </Button>
+                      )}
+                      <Button variant="ghost" size="sm" onClick={() => handleDeleteApiKey(key.Id)}>
+                        <ApperIcon name="Trash2" size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {apiKeys.length > 5 && (
+            <div className="mt-4 text-center">
+              <Button variant="outline" size="sm">
+                View All {apiKeys.length} API Keys
+              </Button>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {/* Notification Settings */}
         <Card className="p-6">
@@ -374,7 +672,107 @@ const handleSaveSecurity = () => {
             </Button>
           </div>
         </Card>
-      </div>
+</div>
+
+      {/* Team Invite Modal */}
+      {showTeamInvite && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-surface-800 rounded-lg p-6 w-full max-w-md border border-surface-600"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-surface-50">Invite Team Member</h3>
+              <button
+                onClick={() => setShowTeamInvite(false)}
+                className="text-surface-400 hover:text-surface-200 transition-colors"
+              >
+                <ApperIcon name="X" size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <Input
+                label="Email Address"
+                type="email"
+                value={newTeamMember.email}
+                onChange={(e) => setNewTeamMember({ ...newTeamMember, email: e.target.value })}
+                placeholder="member@company.com"
+              />
+              <Select
+                label="Role"
+                options={roleOptions}
+                value={newTeamMember.role}
+                onChange={(e) => setNewTeamMember({ ...newTeamMember, role: e.target.value })}
+              />
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <Button variant="primary" onClick={handleInviteTeamMember} className="flex-1">
+                <ApperIcon name="Send" size={16} className="mr-2" />
+                Send Invitation
+              </Button>
+              <Button variant="outline" onClick={() => setShowTeamInvite(false)} className="flex-1">
+                Cancel
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* API Key Form Modal */}
+      {showApiKeyForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-surface-800 rounded-lg p-6 w-full max-w-md border border-surface-600"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-surface-50">Add API Key</h3>
+              <button
+                onClick={() => setShowApiKeyForm(false)}
+                className="text-surface-400 hover:text-surface-200 transition-colors"
+              >
+                <ApperIcon name="X" size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <Select
+                label="Provider"
+                options={providerOptions}
+                value={newApiKey.provider}
+                onChange={(e) => setNewApiKey({ ...newApiKey, provider: e.target.value })}
+              />
+              <Input
+                label="Key Name"
+                value={newApiKey.name}
+                onChange={(e) => setNewApiKey({ ...newApiKey, name: e.target.value })}
+                placeholder="My OpenAI Key"
+              />
+              <Input
+                label="API Key"
+                type="password"
+                value={newApiKey.encryptedKey}
+                onChange={(e) => setNewApiKey({ ...newApiKey, encryptedKey: e.target.value })}
+                placeholder="sk-..."
+              />
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <Button variant="primary" onClick={handleAddApiKey} className="flex-1">
+                <ApperIcon name="Save" size={16} className="mr-2" />
+                Save Key
+              </Button>
+              <Button variant="outline" onClick={() => setShowApiKeyForm(false)} className="flex-1">
+                Cancel
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Danger Zone */}
       <Card className="p-6 border-red-500/30">
