@@ -7,6 +7,13 @@ export const workspaceService = {
         apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
       });
 
+// Initialize ApperClient with Project ID and Public Key
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
       const params = {
         fields: [
           { field: { Name: "Name" } },
@@ -24,6 +31,8 @@ export const workspaceService = {
           { field: { Name: "region" } }
         ]
       };
+
+      const response = await apperClient.fetchRecords("workspace", params);
 
       const response = await apperClient.fetchRecords('workspace', params);
       
@@ -48,6 +57,13 @@ if (!response.success) {
         apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
       });
 
+// Initialize ApperClient with Project ID and Public Key
+      const { ApperClient } = window.ApperSDK;
+      const apperClient = new ApperClient({
+        apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+        apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+      });
+
       const params = {
         fields: [
           { field: { Name: "Name" } },
@@ -65,6 +81,8 @@ if (!response.success) {
           { field: { Name: "region" } }
         ]
       };
+
+      const response = await apperClient.getRecordById("workspace", id, params);
 
       const response = await apperClient.getRecordById('workspace', id, params);
       
